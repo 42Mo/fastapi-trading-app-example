@@ -1,0 +1,128 @@
+openapi: 3.0.0
+info:
+  title: Forex Trading Platform API
+  description: A RESTful API to simulate a Forex trading platform with WebSocket support for real-time order updates.
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /orders:
+    get:
+      summary: Retrieve all orders
+      operationId: getOrders
+      responses:
+        '200':
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderInput'
+    post:
+      summary: Place a new order
+      operationId: placeOrder
+      requestBody:
+        description: Order information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '201':
+          description: Order placed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderInput'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /orders/{orderId}:
+    parameters:
+      - name: orderId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Retrieve a specific order
+      operationId: getOrder
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderInput'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Cancel an order
+      operationId: cancelOrder
+      responses:
+        '204':
+          description: Order canceled
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /ws:
+    get:
+      summary: WebSocket connection for real-time order information
+      operationId: webSocketConnect
+      responses:
+        '101':
+          description: WebSocket connection established
+        '426':
+          description: Upgrade Required
+components:
+  schemas:
+    OrderInput:
+      type: object
+      properties:
+        stoks:
+          type: string
+          description: Currency pair symbol (e.g. 'EURUSD'), or any other stuff 
+        quantity:
+          type: number
+          format: double
+          description: Quantity of the currency pair to be traded
+    OrderOutput:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the order
+        stoks:
+          type: string
+          description: Currency pair symbol (e.g. 'EURUSD')
+        quantity:
+          type: number
+          format: double
+          description: Quantity of the currency pair to be traded
+        status:
+          type: string
+          enum: [pending, executed, canceled]
+          description: Status of the order
+          
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: Error code
+        message:
+          type: string
+          description: Error message
