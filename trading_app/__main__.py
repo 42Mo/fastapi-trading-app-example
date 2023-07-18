@@ -42,7 +42,7 @@ app.include_router(create_websocket_endpoint(db))
 if __name__ == "__main__":
     run(
         "trading_app.__main__:app",
-        host="localhost",
+        host="0.0.0.0",
         port=8080,
         reload=False,
         log_level="debug",
