@@ -6,14 +6,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import logging
+import os
+
 
 ORDERS_QUANTITY = 100
+
+HOST = os.getenv('BASE_HOST', 'localhost')
+PORT = os.getenv('BASE_PORT', '8080')
+API_URL = f"http://{HOST}:{PORT}"
+WS_URL = f"ws://{HOST}:{PORT}/ws"
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 async def post_order(session, quantity):
-    url = 'http://localhost:8080/orders'
+    url = f'{API_URL}/orders'
     start_time = time.time()
     async with session.post(url, json={'stock_symbol': 'EURUSD', 'quantity': quantity}) as resp:
         assert resp.status == 201
@@ -50,7 +57,7 @@ async def receive_updates(ws, order_ids, start_times):
 
 
 async def ws_connection(order_ids, start_times):
-    async with websockets.connect('ws://localhost:8080/ws') as ws:
+    async with websockets.connect(WS_URL) as ws:
         await asyncio.gather(*(subscribe_order(ws, order_id) for order_id in order_ids))
         return await receive_updates(ws, order_ids, start_times)
 
@@ -62,7 +69,7 @@ def plot_execution_times(execution_times):
     plt.title('Order Execution Delay')
     plt.xlabel('Order Index')
     plt.ylabel('Execution Delay (seconds)')
-    plt.show()
+    # plt.show()
 
 
 async def main():

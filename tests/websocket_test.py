@@ -4,8 +4,7 @@ import json
 import aiohttp
 
 
-async def post_order(quantity):
-    url = 'http://localhost:8080/orders'
+async def post_order(url, quantity):
     async with aiohttp.ClientSession() as session:
         async with session.post(url, json={
             'stock_symbol': 'EURUSD',
@@ -19,11 +18,11 @@ async def post_order(quantity):
 class TestWebSocket:
 
     @pytest.mark.asyncio
-    async def test_ws_status_change(self):
-        async with websockets.connect("ws://localhost:8080/ws") as ws_connection:
+    async def test_ws_status_change(self, base_ws, base_url):
+        async with websockets.connect(f'{base_ws}/ws') as ws_connection:
             assert ws_connection.open
 
-            order_id = await post_order(100.0)
+            order_id = await post_order(f'{base_url}/orders', 100.0)
 
             subscribe_message = {
                 "action": "subscribe",
