@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from uvicorn import run
 from trading_app.endpoints.orders import create_endpoints
 from trading_app.logic.order_service import OrderService
+from trading_app.endpoints.websocket import create_websocket_endpoint
 from trading_app.db.database import InMemoryDatabase
 
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +36,7 @@ order_service = OrderService(db)
 
 # Bind routes
 app.include_router(create_endpoints(order_service))
+app.include_router(create_websocket_endpoint(db))
 
 
 if __name__ == "__main__":
