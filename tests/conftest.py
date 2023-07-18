@@ -1,8 +1,6 @@
 import pytest
 import os
 
-# return os.getenv('BASE_URL', 'http://server-container:8080')
-
 
 @pytest.fixture(scope='session')
 def base_url():
