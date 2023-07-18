@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "trading-app-tests"
 version = "0.1.0"
-description = "A practice project for trading simulation"
+description = "Tests for trading simulation server"
 authors = ["Lentsi Denis <Lentsi.Denis@gmail.com>"]
 readme = "README.md"
 
