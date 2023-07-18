@@ -5,6 +5,7 @@ import copy
 from trading_app.db.models.order import Order, OrderStatus
 from trading_app.db.models.errors import OrderNotFoundError
 from trading_app.db.database_interface import DatabaseInterface
+from trading_app.logic.observer_interface import Observer
 
 
 class InMemoryDatabase(DatabaseInterface):
@@ -12,6 +13,14 @@ class InMemoryDatabase(DatabaseInterface):
     def __init__(self):
         self._db: Dict[str, Order] = {}
         self._lock = asyncio.Lock()
+        self._observers = []
+
+    def register_observer(self, observer: Observer) -> None:
+        self._observers.append(observer)
+
+    async def notify_observers(self, order_id: str, new_status: OrderStatus) -> None:
+        for observer in self._observers:
+            await observer.update_status_event(order_id, new_status)
 
     async def add_order(self, stock_symbol: str, quantity: float) -> Order:
         async with self._lock:
@@ -25,6 +34,7 @@ class InMemoryDatabase(DatabaseInterface):
             if order_id not in self._db:
                 raise OrderNotFoundError(order_id)
             self._db[order_id].status = new_status
+            await self.notify_observers(order_id, new_status)
 
     async def get_order(self, order_id: str) -> Order:
         async with self._lock:
