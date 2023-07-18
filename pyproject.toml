@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "trading-app"
+version = "0.1.0"
+description = "A practice project for trading simulation"
+authors = ["Lentsi Denis <Lentsi.Denis@gmail.com>"]
+readme = "README.md"
+packages = [{include = "trading_app"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.100.0"
+uvicorn = "^0.23.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
