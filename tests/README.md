@@ -31,7 +31,13 @@ poetry install
 3. Run the tests
 You can run the tests with pytest:
 ```bash
-poetry run pytest
+poetry run pytest --alluredir=./allure_results
+```
+
+4. View Allure report
+You can run the tests with pytest:
+```bash
+allure serve ./allure_results/
 ```
 
 #### Option 2: Run tests in Docker
